@@ -3,7 +3,10 @@
 Logging Module
 """
 import logging
+import mysql.connector
 import re
+from os import getenv
+from mysql.connector.connection import MySQLConnection
 from typing import List
 
 
@@ -55,3 +58,18 @@ def get_logger() -> logging.Logger:
 
     logger.addHandler(stream_handler)
     return logger
+
+
+def get_db() -> MySQLConnection:
+    """return connector object of a Mysql database"""
+    username = getenv("PERSONAL_DATA_DB_USERNAME", "root")
+    password = getenv("PERSONAL_DATA_DB_PASSWORD", "")
+    host = getenv("PERSONAL_DATA_DB_HOST", "localhost")
+    db_name = getenv("PERSONAL_DATA_DB_NAME")
+    db_con = mysql.connector.connect(
+            user=username,
+            password=password,
+            host=host,
+            database=db_name
+            )
+    return db_con
