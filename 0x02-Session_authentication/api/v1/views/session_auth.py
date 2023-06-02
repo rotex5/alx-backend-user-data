@@ -11,9 +11,12 @@ from os import getenv
 @app_views.route('/auth_session/login', methods=['POST'], strict_slashes=False)
 def login():
     """
-    POST /auth_session/login
+    Handle user login
+    method: POST [/auth_session/login]
     Return
         - Logged in user
+    else:
+        - else error message found
     """
     email = request.form.get("email")
     password = request.form.get("password")
