@@ -15,8 +15,8 @@ def login():
     method: POST [/auth_session/login]
     Return
         - Logged in user
-    else:
-        - else error message found
+    Else:
+        - error message found
     """
     email = request.form.get("email")
     password = request.form.get("password")
@@ -47,3 +47,23 @@ def login():
 
             return response
     return jsonify({"error": "wrong password"}), 401
+
+
+@app_views.route('/auth_session/logout',
+                 methods=['DELETE'], strict_slashes=False)
+def logout():
+    """
+    Handle user logout
+    method:DELETE [/auth_session/logout]
+    Return:
+        - Empty dictionary if succesful
+    Else:
+        - error message found
+    """
+    from api.v1.app import auth
+
+    destroyed_session = auth.destroy_session(request)
+    if not destroyed_session:
+        abort(404)
+
+    return jsonify({}), 200
