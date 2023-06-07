@@ -34,7 +34,7 @@ def register_users():
 
 @app.route('/sessions', methods=["POST"])
 def login_user() -> str:
-    """Logs in a user and returns session ID
+    """Login valid user and returns session id
     """
     try:
         email = request.form["email"]
