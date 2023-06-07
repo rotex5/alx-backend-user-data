@@ -9,7 +9,7 @@ from user import User
 
 def _hash_password(password: str) -> bytes:
     """returns bytes(i.e Slat hashed password passed in)"""
-    encoded_pwd = password.encode()
+    encoded_pwd = password.encode('utf8')
     hashed_pwd = bcrypt.hashpw(encoded_pwd, bcrypt.gensalt())
     return hashed_pwd
 
@@ -33,3 +33,16 @@ class Auth:
             return user
 
         raise ValueError("Use {} already exists".format(user_check.email))
+
+    def valid_login(self, email: str, password: str) -> bool:
+        """Returns True or False based on Credential Validation
+        """
+        try:
+            user_check = self._db.find_user_by(email=email)
+            if user_check:
+                encoded_pwd = password.encode('utf8')
+                stored_hash = user_check.hashed_password
+                return bcrypt.checkpw(encoded_pwd, stored_hash)
+        except NoResultFound:
+            return False
+        return False
