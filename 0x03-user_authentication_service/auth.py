@@ -10,8 +10,8 @@ from uuid import uuid4
 
 def _hash_password(password: str) -> bytes:
     """returns bytes(i.e Slat hashed password passed in)"""
-    encoded_pwd = password.encode('utf8')
-    hashed_pwd = bcrypt.hashpw(encoded_pwd, bcrypt.gensalt())
+    hashed_pwd = bcrypt.hashpw(password.encode("utf-8"),
+                               bcrypt.gensalt())
     return hashed_pwd
 
 
@@ -46,9 +46,8 @@ class Auth:
         try:
             user_check = self._db.find_user_by(email=email)
             if user_check:
-                encoded_pwd = password.encode('utf8')
-                stored_hash = user_check.hashed_password
-                return bcrypt.checkpw(encoded_pwd, stored_hash)
+                return bcrypt.checkpw(password.encode("utf-8"),
+                                      user_check.hashed_password)
         except NoResultFound:
             return False
         return False
