@@ -10,15 +10,15 @@ app = Flask(__name__)
 AUTH = Auth()
 
 
-@app.route("/", methods=["GET"])
+@app.route("/", methods=["GET"], strict_slashes=False)
 def welcomeMessage() -> str:
     """Returns a welcome message
     """
     return jsonify({"message": "Bienvenue"})
 
 
-@app.route("/users", methods=["POST"])
-def register_users():
+@app.route("/users", methods=["POST"], strict_slashes=False)
+def users():
     try:
         email = request.form["email"]
         password = request.form["password"]
@@ -32,8 +32,8 @@ def register_users():
         return jsonify({"message": "email already registered"}), 400
 
 
-@app.route('/sessions', methods=["POST"])
-def login_user() -> str:
+@app.route('/sessions', methods=["POST"], strict_slashes=False)
+def login() -> str:
     """Login valid user and returns session id
     """
     try:
@@ -54,8 +54,8 @@ def login_user() -> str:
     return response
 
 
-@app.route('/sessions', methods=['DELETE'])
-def logout_user() -> str:
+@app.route('/sessions', methods=['DELETE'], strict_slashes=False)
+def logout() -> str:
     """Logout a user and destroy associated session
     """
     session_id = request.cookies.get("session_id", None)
@@ -69,6 +69,22 @@ def logout_user() -> str:
     AUTH.destroy_session(user.id)
 
     return redirect("/")
+
+
+@app.route('/profile', methods=['GET'])
+def profile() -> str:
+    """ Returns profile of registered/logged-in user
+    """
+    session_id = request.cookies.get("session_id", None)
+    if session_id is None:
+        abort(403)
+
+    user = AUTH.get_user_from_session_id(session_id)
+    if user is None:
+        abort(403)
+
+    return jsonify({"email": "{}".format(user.email),
+                    "message": "logged in"}), 200
 
 
 if __name__ == "__main__":
